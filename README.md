@@ -27,3 +27,9 @@ Q2：What were the key elements in the paper？
 Q3：What can you use yourself？
 
 Q4：What other references you want to follow
+
+
+
+### 2024新年Flag
+
+多投一些时间在科研上，在做科研的时候不要摸鱼。
