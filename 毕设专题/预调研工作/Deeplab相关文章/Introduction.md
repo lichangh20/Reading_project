@@ -132,3 +132,18 @@ Deeplab V3+ 额外使用了一个Decoder结构，Encoder结构就是原本的Dee
 - 使用了Atrous Depthwise Convolution，也就是将深度可分离卷积中的第一步深度卷积每个Channel换成了膨胀卷积，可以在维持性能表现的同时，显著降低计算复杂度
 - 引入了Encoder-Decoder架构，Encoder是Deeplab V3，通过将网络最后几层的卷积替换成膨胀卷积，有效减少了图形分辨率降低的倍数；Decoder架构将原本直接Upsampling 16 *的过程转换为了：先是Upsampling 一个4 *，之后将当前信息与low level的图片信息fuse在一起，再Upsampling一个4 *，效果变得好了很多
 - Backbone网络使用了Modified Aligned Xception，相较于Aligned Xception网络更深，且将max_pooling层替换为了atrous seperable convolution
+
+
+
+### Deeplab V3+ 论文阅读
+
+文章考虑了使用spatial pyramid pooling module 与 encoder-decoder架构的神经网络，前者通过不同分辨率的池化层获取语义信息，后者可以获得更好的物体边界信息
+
+- encoder负责获取语义信息，decoder负责获取边界信息
+- 可以通过调整膨胀卷积控制抽取的encoder特征的分辨率，进而实现precision 和 runtime 的 trade-off
+- 利用DeepLab V3作为encoder，可以抽取语义信息。DeepLab V3中使用的膨胀卷积使得output_stride(抽取出的特征图分辨率与原始图分辨率的比例)可以更小
+- decoder上，先Upsampling 4倍，并与低层的图片信息相结合(底层图片信息通过1 * 1卷积修改通道数来改变权重)，之后再Upsampling 4倍，会比直接Upsampling 16倍要更好
+- Modified Aligned Xception：在Aligend Xception Model的基础上进行了几点改变：
+  - 更深的Xception Network
+  - 将所有的最大池化层替换为有步长的深度可分离卷积
+  - 在每一个3 * 3的深度卷积之后添加Batch Normalization和ReLU激活函数
